@@ -4,7 +4,25 @@
 # zprofile and are guarded so this file is safe to use on a fresh remote box.
 # ============================================================================
 
-# --- Powerlevel10k instant prompt (must stay near the top) ------------------
+# --- Auto-start zellij (MUST be first — before the p10k instant prompt) -----
+# A full-screen TUI launched *after* instant prompt activates leaves the
+# terminal in a broken raw/alt-screen state (blank screen, keys don't echo).
+# So this runs first: the outer shell blocks on zellij and never renders the
+# instant prompt. Inner zellij panes re-source this file, hit the $ZELLIJ
+# guard, skip the block, and get the normal prompt.
+# Guards: interactive + real TTY · zellij installed · not already in zellij ·
+#         not an IDE-embedded terminal (VS Code / IntelliJ).
+if [[ -o interactive ]] && [[ -t 1 ]] \
+   && command -v zellij >/dev/null 2>&1 \
+   && [[ -z "$ZELLIJ" ]] \
+   && [[ "$TERM_PROGRAM" != "vscode" ]] \
+   && [[ -z "$INTELLIJ_ENVIRONMENT_READER" ]]; then
+  export ZELLIJ_AUTO_ATTACH=true   # reuse one session; rely on zellij panes, not iTerm2 windows
+  export ZELLIJ_AUTO_EXIT=true     # closing zellij closes the terminal window
+  eval "$(zellij setup --generate-auto-start zsh)"
+fi
+
+# --- Powerlevel10k instant prompt (keep near the top) -----------------------
 # Anything that needs console input (passwords, [y/n]) must go ABOVE this block.
 if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
@@ -14,21 +32,6 @@ fi
 [ -f "$HOME/.secrets.zsh" ] && source "$HOME/.secrets.zsh"   # gitignored, see secrets.zsh.example
 [ -f "$HOME/.env.zsh" ]     && source "$HOME/.env.zsh"
 [ -f "$HOME/.path.zsh" ]    && source "$HOME/.path.zsh"
-
-# --- Auto-start zellij ------------------------------------------------------
-# Runs BEFORE oh-my-zsh so the outer shell exec's into zellij fast; only the
-# inner panes pay the full init cost. Guards:
-#   * zellij must be installed     -> harmless on boxes without it (remote, etc.)
-#   * not already inside zellij    -> the generator handles $ZELLIJ, belt & braces
-#   * not an IDE-embedded terminal -> leave IntelliJ / VS Code terminals alone
-if command -v zellij >/dev/null 2>&1 \
-   && [[ -z "$ZELLIJ" ]] \
-   && [[ "$TERM_PROGRAM" != "vscode" ]] \
-   && [[ -z "$INTELLIJ_ENVIRONMENT_READER" ]]; then
-  export ZELLIJ_AUTO_ATTACH=true   # reuse one session; rely on zellij panes, not iTerm2 windows
-  export ZELLIJ_AUTO_EXIT=true     # closing zellij closes the terminal window
-  eval "$(zellij setup --generate-auto-start zsh)"
-fi
 
 # --- Oh My Zsh --------------------------------------------------------------
 export ZSH="$HOME/.oh-my-zsh"
