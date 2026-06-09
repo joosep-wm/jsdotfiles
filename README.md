@@ -116,7 +116,11 @@ because macOS speaks them natively and the shell defaults to them. Core set:
 | `^B`/`^F` | back/fwd char | `^K`  | kill to end of line  |
 | `^P`/`^N` | prev/next line | `^Y` | yank (paste killed)  |
 
-Word-by-word movement stays on **Option/Alt + ←/→** everywhere.
+**Word-by-word movement stays on `Option + ←/→` everywhere** — including the shell *inside
+zellij*. iTerm2's default arrow mappings send `Option+←`→`Esc b` (back-word) and
+`Option+→`→`Esc f` (forward-word); these are deliberately left untouched. The only catch was
+that zellij used to bind `Alt f` (= `Option+→`) to floating panes and swallow it — so floating
+was **moved to `Alt w`** (see the zellij note below) and `Option+→` now reaches the shell.
 
 What this repo configures, and the few **manual GUI settings** that can't be a dotfile:
 
@@ -125,7 +129,7 @@ What this repo configures, and the few **manual GUI settings** that can't be a d
 | **zsh / readline** | default emacs mode | nothing — already works |
 | **Vim (insert + `:` cmdline)** | `vim/vimrc` | nothing — symlinked. Normal mode keeps Vim motions on purpose |
 | **macOS native apps** (Notes, Mail, Safari) | `macos/DefaultKeyBinding.dict` | adds `^W`/`^U`; built-ins give the rest. **Relaunch apps** |
-| **iTerm2** | — (manual) | Settings → Profiles → Keys → set **BOTH Left & Right Option Key = `Esc+`**. This is what makes Alt/Option bindings reach zellij/shell. (Estonian keyboard layout types ä ü õ ö as direct keys, so Option's special-character layer isn't needed — no reason to keep an Option key on `Normal`.) |
+| **iTerm2** | — (manual) | Settings → Profiles → Keys → set **BOTH Left & Right Option Key = `Esc+`**. This makes Alt/Option bindings reach zellij/shell. **Leave the default `⌥←`/`⌥→` key mappings alone** — they give word-jump. (Estonian layout types ä ü õ ö as direct keys, so Option's special-character layer isn't needed — no reason to keep an Option key on `Normal`.) |
 | **IntelliJ** | — (manual) | Settings → Keymap → **“macOS System Defaults”** (maps `^A/^E/^K/…` to caret actions; the plain “macOS” keymap steals `^E` for Recent Files) |
 
 ### Why iTerm2 needs `Esc+`
@@ -138,15 +142,18 @@ Setting **both Option keys = `Esc+`** makes them send the ESC-prefixed form, so 
 keyboard layout** ä/ü/õ/ö are direct keys, so there's nothing to lose. If you ever switch to
 a US layout and want `é`/`–` back, set one Option key to `Normal` instead.)
 
-> Note: iTerm2 ships explicit `⌥←`/`⌥→` mappings (send `Esc b`/`Esc f`), which is why word-jump
-> and a couple of zellij `Alt` shortcuts work even before you change anything.
-
 ### zellij
 `zellij/config.kdl` is the **unlock-first** layout: locked by default, `Ctrl+g` toggles
-normal mode. A curated set of `Alt` bindings (move focus, new pane, resize, `Alt+f` floating)
-is kept live in *both* modes via the `shared_among "normal" "locked"` block, so they work
-without unlocking. Those `Alt` bindings only reach zellij once iTerm2's Right Option is `Esc+`
-(see above).
+normal mode. A curated set of `Alt` bindings (move focus, new pane, resize, floating) is kept
+live in *both* modes via the `shared_among "normal" "locked"` block, so they work without
+unlocking. Those `Alt` bindings only reach zellij once iTerm2's Option keys are `Esc+`.
+
+**Floating panes:** toggled with **`Alt w`** (moved off the zellij-default `Alt f`, which
+collided with `Option+→`/forward-word in the shell). Also still available in pane mode
+(`Ctrl+g` → `p` → `w`).
+
+> Note: iTerm2 ships explicit `⌥←`/`⌥→` mappings (send `Esc b`/`Esc f` = back/forward-word).
+> Those take precedence over the `Esc+` setting, which is exactly why word-jump keeps working.
 
 ---
 
