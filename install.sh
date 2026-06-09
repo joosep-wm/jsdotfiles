@@ -33,6 +33,24 @@ link() {
   ok "$dest -> $src"
 }
 
+# copy <repo-relative-src> <absolute-dest>
+# Like link(), but writes a real file. Needed for paths that sandboxed apps must
+# read (e.g. ~/Library/KeyBindings) — a symlink out to the repo gets blocked by
+# the app sandbox. Trade-off: edits to the repo file need a re-run of install.sh.
+copy() {
+  local src="$DOTFILES/$1" dest="$2"
+  if [ ! -e "$src" ]; then warn "missing in repo, skipping: $1"; return; fi
+  mkdir -p "$(dirname "$dest")"
+  if [ -L "$dest" ]; then
+    rm "$dest"
+  elif [ -e "$dest" ]; then
+    mv "$dest" "$dest.backup.$TS"
+    warn "backed up existing $dest -> $dest.backup.$TS"
+  fi
+  cp "$src" "$dest"
+  ok "$dest (copy of $src)"
+}
+
 install_symlinks() {
   info "Linking dotfiles from $DOTFILES"
   link shell/zshrc        "$HOME/.zshrc"
@@ -49,9 +67,10 @@ install_symlinks() {
   link zellij/config.kdl  "$HOME/.config/zellij/config.kdl"
   link p10k/p10k.zsh      "$HOME/.p10k.zsh"
 
-  # macOS-only: Cocoa key bindings
+  # macOS-only: Cocoa key bindings. COPIED, not symlinked — sandboxed apps
+  # (Notes, Mail, …) can't follow a symlink out to the repo.
   if [ "$OS" = "Darwin" ]; then
-    link macos/DefaultKeyBinding.dict "$HOME/Library/KeyBindings/DefaultKeyBinding.dict"
+    copy macos/DefaultKeyBinding.dict "$HOME/Library/KeyBindings/DefaultKeyBinding.dict"
   fi
 
   # Secrets: never symlinked. Seed from template if absent.

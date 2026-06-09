@@ -30,7 +30,7 @@ jsdotfiles/
 ├── tmux/tmux.conf             -> ~/.tmux.conf
 ├── zellij/config.kdl          -> ~/.config/zellij/config.kdl
 ├── p10k/p10k.zsh              -> ~/.p10k.zsh
-└── macos/DefaultKeyBinding.dict -> ~/Library/KeyBindings/...  (macOS only)
+└── macos/DefaultKeyBinding.dict => ~/Library/KeyBindings/...  (macOS only; COPIED, not symlinked — sandboxed apps can't follow a symlink to the repo)
 ```
 
 ---
@@ -168,3 +168,7 @@ git add -A && git commit -m "tweak X" && git push
 
 On another machine: `git pull` — symlinks already point here, so changes apply on next shell.
 If you added a *new* tracked dotfile, run `./install.sh` again to link it.
+
+**Exception — `macos/DefaultKeyBinding.dict`:** this one is *copied*, not symlinked (sandboxed
+apps like Notes can't follow a symlink out to the repo). So after editing it, re-run
+`./install.sh` to refresh the copy, then relaunch the affected apps.
