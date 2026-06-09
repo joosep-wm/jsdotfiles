@@ -125,15 +125,18 @@ What this repo configures, and the few **manual GUI settings** that can't be a d
 | **zsh / readline** | default emacs mode | nothing — already works |
 | **Vim (insert + `:` cmdline)** | `vim/vimrc` | nothing — symlinked. Normal mode keeps Vim motions on purpose |
 | **macOS native apps** (Notes, Mail, Safari) | `macos/DefaultKeyBinding.dict` | adds `^W`/`^U`; built-ins give the rest. **Relaunch apps** |
-| **iTerm2** | — (manual) | Settings → Profiles → Keys → **Right Option Key = `Esc+`** (keep Left = `Normal` for typing `é` etc.). This is what makes Alt/Option bindings reach zellij/shell |
+| **iTerm2** | — (manual) | Settings → Profiles → Keys → set **BOTH Left & Right Option Key = `Esc+`**. This is what makes Alt/Option bindings reach zellij/shell. (Estonian keyboard layout types ä ü õ ö as direct keys, so Option's special-character layer isn't needed — no reason to keep an Option key on `Normal`.) |
 | **IntelliJ** | — (manual) | Settings → Keymap → **“macOS System Defaults”** (maps `^A/^E/^K/…` to caret actions; the plain “macOS” keymap steals `^E` for Recent Files) |
 
 ### Why iTerm2 needs `Esc+`
 In a terminal, “Alt+key” is sent as an ESC-prefixed byte sequence (`Esc` then the key).
 macOS Option defaults to typing special characters instead, so Alt bindings never fire.
-Setting **Right Option = `Esc+`** makes that one key send the ESC-prefixed form (so zellij's
-`Alt` bindings and readline `Alt+b`/`Alt+f` work), while **Left Option = `Normal`** keeps
-the special-character layer for typing accented characters.
+Setting **both Option keys = `Esc+`** makes them send the ESC-prefixed form, so zellij's
+`Alt` bindings and readline `Alt+b`/`Alt+f` work from either Option key.
+
+(The usual trade-off is losing Option's accented-character layer — but on the **Estonian
+keyboard layout** ä/ü/õ/ö are direct keys, so there's nothing to lose. If you ever switch to
+a US layout and want `é`/`–` back, set one Option key to `Normal` instead.)
 
 > Note: iTerm2 ships explicit `⌥←`/`⌥→` mappings (send `Esc b`/`Esc f`), which is why word-jump
 > and a couple of zellij `Alt` shortcuts work even before you change anything.
