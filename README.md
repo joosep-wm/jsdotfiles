@@ -130,7 +130,7 @@ What this repo configures, and the few **manual GUI settings** that can't be a d
 | **Vim (insert + `:` cmdline)** | `vim/vimrc` | nothing — symlinked. Normal mode keeps Vim motions on purpose |
 | **macOS native apps** (Notes, Mail, Safari) | `macos/DefaultKeyBinding.dict` | adds `^W`/`^U`; built-ins give the rest. **Relaunch apps** |
 | **iTerm2** | — (manual) | Settings → Profiles → Keys → set **BOTH Left & Right Option Key = `Esc+`**. This makes Alt/Option bindings reach zellij/shell. **Leave the default `⌥←`/`⌥→` key mappings alone** — they give word-jump. (Estonian layout types ä ü õ ö as direct keys, so Option's special-character layer isn't needed — no reason to keep an Option key on `Normal`.) |
-| **IntelliJ** | — (manual) | Settings → Keymap → **“macOS System Defaults”** (maps `^A/^E/^K/…` to caret actions; the plain “macOS” keymap steals `^E` for Recent Files) |
+| **IntelliJ** | **JetBrains Settings Sync** (not a dotfile — IntelliJ ignores `DefaultKeyBinding.dict`) | Settings → Keymap → **“macOS System Defaults”** (maps `^A/^E/^B/^F/^P/^N/…` to caret actions; the plain “macOS” keymap steals `^E` for Recent Files), then **manually bind the chords it leaves unmapped** (`^W ^U ^K`, etc). The keymap rides along on **JetBrains Settings Sync**, so it propagates across machines automatically — nothing to symlink |
 
 ### Why iTerm2 needs `Esc+`
 In a terminal, “Alt+key” is sent as an ESC-prefixed byte sequence (`Esc` then the key).
