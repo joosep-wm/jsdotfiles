@@ -1,0 +1,30 @@
+" ============================================================================
+" ~/.vimrc  (managed by jsdotfiles)
+" ============================================================================
+
+set relativenumber
+
+" ----------------------------------------------------------------------------
+" Readline-style line editing in INSERT and COMMAND-LINE mode.
+" Keeps muscle memory consistent with the shell (zsh/readline), macOS native
+" text fields, and IntelliJ's "macOS System Defaults" keymap.
+" NOTE: Normal mode intentionally keeps native Vim motions (b/w/0/$/dw...).
+"       This only touches insert & command-line editing.
+" ----------------------------------------------------------------------------
+
+" Insert mode
+inoremap <C-a> <C-o>^
+inoremap <C-e> <End>
+inoremap <C-b> <Left>
+inoremap <C-f> <Right>
+inoremap <C-d> <Del>
+inoremap <C-p> <Up>
+inoremap <C-n> <Down>
+" <C-w> (delete word back) and <C-u> (delete to line start) already work natively.
+
+" Command-line mode ( :  and  / )
+cnoremap <C-a> <Home>
+cnoremap <C-e> <End>
+cnoremap <C-b> <Left>
+cnoremap <C-f> <Right>
+cnoremap <C-d> <Del>

@@ -1,0 +1,21 @@
+# ============================================================================
+# ~/.bashrc  (managed by jsdotfiles) — minimal bash fallback for remote boxes
+# whose default/login shell is bash. zsh is preferred; this keeps bash usable.
+# ============================================================================
+
+# Homebrew / Linuxbrew (login shells usually handle this, but bash -c may not)
+for _brew in /opt/homebrew/bin/brew /usr/local/bin/brew /home/linuxbrew/.linuxbrew/bin/brew; do
+  [ -x "$_brew" ] && eval "$("$_brew" shellenv)" && break
+done
+unset _brew
+
+[ -d "$HOME/.local/bin" ] && export PATH="$HOME/.local/bin:$PATH"
+
+# Shared simple aliases (the ones in aliases.zsh are bash-compatible)
+[ -f "$HOME/.aliases.zsh" ] && source "$HOME/.aliases.zsh"
+
+# fzf
+[ -f "$HOME/.fzf.bash" ] && source "$HOME/.fzf.bash"
+
+export EDITOR="${EDITOR:-vim}"
+export VISUAL="$EDITOR"

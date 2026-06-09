@@ -1,0 +1,11 @@
+# Never commit real secrets — only secrets.zsh.example is tracked.
+secrets.zsh
+.secrets.zsh
+
+# Editor / OS noise
+*.swp
+*.swo
+.DS_Store
+
+# Install-time backups
+*.backup.*

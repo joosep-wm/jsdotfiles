@@ -1,0 +1,15 @@
+[user]
+	name = Joosep Simm
+	email = joosep@gridraven.com
+[core]
+	autocrlf = input
+[init]
+	defaultBranch = main
+# Use the GitHub CLI as the credential helper. `gh` is resolved from PATH
+# (not hardcoded to a brew path) so this works on macOS and Linux alike.
+[credential "https://github.com"]
+	helper =
+	helper = !gh auth git-credential
+[credential "https://gist.github.com"]
+	helper =
+	helper = !gh auth git-credential

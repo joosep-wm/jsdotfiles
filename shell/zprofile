@@ -1,0 +1,25 @@
+# ============================================================================
+# ~/.zprofile  (managed by jsdotfiles) — login-shell setup, portable.
+# ============================================================================
+
+# --- Homebrew (Apple Silicon, Intel mac, or Linuxbrew) ----------------------
+for _brew in /opt/homebrew/bin/brew /usr/local/bin/brew /home/linuxbrew/.linuxbrew/bin/brew; do
+  if [ -x "$_brew" ]; then
+    eval "$("$_brew" shellenv)"
+    break
+  fi
+done
+unset _brew
+
+# --- ~/.local/bin (pipx, poetry, antigravity, many linux installers) --------
+[ -d "$HOME/.local/bin" ] && export PATH="$HOME/.local/bin:$PATH"
+
+# --- JetBrains Toolbox scripts (macOS) --------------------------------------
+_jb="$HOME/Library/Application Support/JetBrains/Toolbox/scripts"
+[ -d "$_jb" ] && export PATH="$PATH:$_jb"
+unset _jb
+
+# --- python.org framework build (macOS only) --------------------------------
+_pyfw="/Library/Frameworks/Python.framework/Versions/3.12/bin"
+[ -d "$_pyfw" ] && export PATH="$_pyfw:$PATH"
+unset _pyfw

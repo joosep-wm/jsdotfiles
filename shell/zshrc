@@ -1,0 +1,59 @@
+# ============================================================================
+# ~/.zshrc  (managed by jsdotfiles)
+# Portable across macOS and Linux. Mac-only paths live in env.zsh / path.zsh /
+# zprofile and are guarded so this file is safe to use on a fresh remote box.
+# ============================================================================
+
+# --- Powerlevel10k instant prompt (must stay near the top) ------------------
+# Anything that needs console input (passwords, [y/n]) must go ABOVE this block.
+if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+fi
+
+# --- Secrets & environment (sourced only if present) ------------------------
+[ -f "$HOME/.secrets.zsh" ] && source "$HOME/.secrets.zsh"   # gitignored, see secrets.zsh.example
+[ -f "$HOME/.env.zsh" ]     && source "$HOME/.env.zsh"
+[ -f "$HOME/.path.zsh" ]    && source "$HOME/.path.zsh"
+
+# --- Oh My Zsh --------------------------------------------------------------
+export ZSH="$HOME/.oh-my-zsh"
+ZSH_THEME="powerlevel10k/powerlevel10k"
+
+# Plugins that depend on external tools (docker/gcloud/kubectl/terraform/zoxide/fzf)
+# only add completions/aliases; they degrade gracefully when the tool is absent.
+plugins=(
+  git
+  docker
+  gcloud
+  kubectl
+  terraform
+  fzf
+  zoxide
+  zsh-autosuggestions
+  you-should-use
+  zsh-syntax-highlighting
+)
+
+if [ -d "$ZSH" ]; then
+  source "$ZSH/oh-my-zsh.sh"
+else
+  # Minimal fallback so a box without oh-my-zsh is still usable.
+  # Run `./install.sh --omz` to install the full stack.
+  autoload -Uz compinit && compinit
+  autoload -Uz colors && colors
+  setopt prompt_subst
+  PROMPT='%F{green}%n@%m%f %F{blue}%~%f %# '
+fi
+
+# --- Tools ------------------------------------------------------------------
+[ -f "$HOME/.fzf.zsh" ] && source "$HOME/.fzf.zsh"
+
+# --- Aliases ----------------------------------------------------------------
+[ -f "$HOME/.aliases.zsh" ] && source "$HOME/.aliases.zsh"
+
+# --- Editor -----------------------------------------------------------------
+export EDITOR="${EDITOR:-vim}"
+export VISUAL="$EDITOR"
+
+# --- Powerlevel10k user config ----------------------------------------------
+[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh

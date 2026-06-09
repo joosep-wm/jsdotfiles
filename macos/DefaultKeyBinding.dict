@@ -1,0 +1,17 @@
+/* ===========================================================================
+ * ~/Library/KeyBindings/DefaultKeyBinding.dict  (managed by jsdotfiles)
+ * macOS ONLY. Read by the Cocoa text system at app launch.
+ *
+ * macOS already provides the emacs/readline chords ^A ^E ^B ^F ^P ^N ^D ^K ^Y
+ * in every native text field. This file adds the two that are missing, so your
+ * line-editing muscle memory matches the shell and Vim:
+ *     ^W  delete word backward
+ *     ^U  delete to beginning of line
+ *
+ * Apps must be relaunched to pick up changes. Electron apps (Slack, VS Code)
+ * ignore this file but honor the built-in chords anyway.
+ * ========================================================================= */
+{
+    "^w" = "deleteWordBackward:";
+    "^u" = "deleteToBeginningOfLine:";
+}
