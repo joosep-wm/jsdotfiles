@@ -129,31 +129,38 @@ What this repo configures, and the few **manual GUI settings** that can't be a d
 | **zsh / readline** | default emacs mode | nothing — already works |
 | **Vim (insert + `:` cmdline)** | `vim/vimrc` | nothing — symlinked. Normal mode keeps Vim motions on purpose |
 | **macOS native apps** (Notes, Mail, Safari) | `macos/DefaultKeyBinding.dict` | adds `^W`/`^U`; built-ins give the rest. **Relaunch apps** |
-| **iTerm2** | — (manual) | Settings → Profiles → Keys → set **BOTH Left & Right Option Key = `Esc+`**. This makes Alt/Option bindings reach zellij/shell. **Leave the default `⌥←`/`⌥→` key mappings alone** — they give word-jump. (Estonian layout types ä ü õ ö as direct keys, so Option's special-character layer isn't needed — no reason to keep an Option key on `Normal`.) |
+| **iTerm2** | — (manual) | Settings → Profiles → Keys → set **Left Option Key = `Esc+`** and **Right Option Key = `Normal`**. Left makes Alt/Option bindings reach zellij/shell; Right keeps the Option **special-character layer** so you can type `$ @ { } [ ] \ | €` (these live on Option, *not* direct keys, on the Estonian layout). **Leave the default `⌥←`/`⌥→` key mappings alone** — they give word-jump from both keys. |
 | **IntelliJ** | **JetBrains Settings Sync** (not a dotfile — IntelliJ ignores `DefaultKeyBinding.dict`) | Settings → Keymap → **“macOS System Defaults”** (maps `^A/^E/^B/^F/^P/^N/…` to caret actions; the plain “macOS” keymap steals `^E` for Recent Files), then **manually bind the chords it leaves unmapped** (`^W ^U ^K`, etc). The keymap rides along on **JetBrains Settings Sync**, so it propagates across machines automatically — nothing to symlink |
 
-### Why iTerm2 needs `Esc+`
+### Why iTerm2 needs `Esc+` — and why only the *left* Option
 In a terminal, “Alt+key” is sent as an ESC-prefixed byte sequence (`Esc` then the key).
 macOS Option defaults to typing special characters instead, so Alt bindings never fire.
-Setting **both Option keys = `Esc+`** makes them send the ESC-prefixed form, so zellij's
-`Alt` bindings and readline `Alt+b`/`Alt+f` work from either Option key.
+Setting **Left Option = `Esc+`** makes it send the ESC-prefixed form, so zellij's `Alt`
+bindings and readline `Alt+b`/`Alt+f` work from the left key.
 
-(The usual trade-off is losing Option's accented-character layer — but on the **Estonian
-keyboard layout** ä/ü/õ/ö are direct keys, so there's nothing to lose. If you ever switch to
-a US layout and want `é`/`–` back, set one Option key to `Normal` instead.)
+**Why not both?** `Esc+` kills Option's special-character layer, and on the Estonian
+layout that layer is where `$ @ { } [ ] \ | €` live (only ä/ü/õ/ö are direct keys). Setting
+*both* keys to `Esc+` makes those symbols untypable in the terminal. So **Right Option stays
+`Normal`** for typing them, **Left Option = `Esc+`** for the meta bindings.
+
+The split is also ergonomic: zellij's `Alt` keys are mostly right-hand letters
+(`h j k l i o p n`), so driving them with the **left** Option is an opposite-hand chord.
+Trade-off: zellij `Alt` bindings now fire only from the **left** Option key.
 
 ### zellij
 `zellij/config.kdl` is the **unlock-first** layout: locked by default, `Ctrl+g` toggles
 normal mode. A curated set of `Alt` bindings (move focus, new pane, resize, floating) is kept
 live in *both* modes via the `shared_among "normal" "locked"` block, so they work without
-unlocking. Those `Alt` bindings only reach zellij once iTerm2's Option keys are `Esc+`.
+unlocking. Those `Alt` bindings only reach zellij once iTerm2's **Left** Option key is `Esc+`
+(the Right Option stays `Normal` for special characters — see above).
 
 **Floating panes:** toggled with **`Alt w`** (moved off the zellij-default `Alt f`, which
 collided with `Option+→`/forward-word in the shell). Also still available in pane mode
 (`Ctrl+g` → `p` → `w`).
 
 > Note: iTerm2 ships explicit `⌥←`/`⌥→` mappings (send `Esc b`/`Esc f` = back/forward-word).
-> Those take precedence over the `Esc+` setting, which is exactly why word-jump keeps working.
+> Those take precedence over the `Esc+`/`Normal` setting, which is why word-jump keeps working
+> from **both** Option keys regardless of the split.
 
 ---
 
