@@ -37,20 +37,25 @@ fi
 export ZSH="$HOME/.oh-my-zsh"
 ZSH_THEME="powerlevel10k/powerlevel10k"
 
-# Plugins that depend on external tools (docker/gcloud/kubectl/terraform/zoxide/fzf)
-# only add completions/aliases; they degrade gracefully when the tool is absent.
+# Most tool plugins (docker/gcloud/kubectl/terraform) only add completions/aliases
+# and stay quiet when the tool is absent. The fzf and zoxide plugins are the
+# exception: they print "[oh-my-zsh] … not found" to the console at load time,
+# which — happening after the p10k instant-prompt preamble — trips p10k's
+# "console output during zsh initialization" warning. So add those two only when
+# the binary is actually present.
 plugins=(
   git
   docker
   gcloud
   kubectl
   terraform
-  fzf
-  zoxide
   zsh-autosuggestions
   you-should-use
-  zsh-syntax-highlighting
 )
+command -v fzf    >/dev/null 2>&1 && plugins+=(fzf)
+command -v zoxide >/dev/null 2>&1 && plugins+=(zoxide)
+# zsh-syntax-highlighting must be sourced last, so append it after everything.
+plugins+=(zsh-syntax-highlighting)
 
 if [ -d "$ZSH" ]; then
   source "$ZSH/oh-my-zsh.sh"
