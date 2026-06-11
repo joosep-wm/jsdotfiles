@@ -16,7 +16,7 @@ if [[ -o interactive ]] && [[ -t 1 ]] \
    && command -v zellij >/dev/null 2>&1 \
    && [[ -z "$ZELLIJ" ]] \
    && [[ "$TERM_PROGRAM" != "vscode" ]] \
-   && [[ -z "$INTELLIJ_ENVIRONMENT_READER" ]]; then
+   && [[ "$TERMINAL_EMULATOR" != "JetBrains-JediTerm" ]]; then
   export ZELLIJ_AUTO_ATTACH=true   # reuse one session; rely on zellij panes, not iTerm2 windows
   export ZELLIJ_AUTO_EXIT=true     # closing zellij closes the terminal window
   eval "$(zellij setup --generate-auto-start zsh)"
