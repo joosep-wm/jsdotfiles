@@ -349,8 +349,12 @@ default_mode "locked"
 // Options:
 //   - true (default)
 //   - false
-// 
-// mouse_mode false
+//
+// Set explicitly: with mouse_mode on, zellij captures the wheel and scrolls
+// the pane's scrollback at a bare shell prompt. Without it, iTerm2's
+// "scroll wheel sends arrow keys in alternate screen mode" hijacks the wheel
+// into ↑/↓ (= zsh command history) instead.
+mouse_mode true
  
 // Toggle having pane frames around the panes
 // Options:
