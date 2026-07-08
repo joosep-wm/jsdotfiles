@@ -7,7 +7,11 @@ if command -v fzf >/dev/null 2>&1; then
     *) PATH="$PATH:/opt/homebrew/opt/fzf/bin" ;;
   esac
 
-  if ! eval "$(fzf --bash)" 2>/dev/null; then
+  # Capture via $() so old fzf's "unknown option: --bash" stderr is swallowed
+  # (it escapes the outer redirect) and fzf's exit status decides the fallback.
+  if _fzf_init="$(fzf --bash 2>/dev/null)"; then
+    eval "$_fzf_init"
+  else
     for _f in \
       /usr/share/doc/fzf/examples/key-bindings.bash \
       /usr/share/fzf/key-bindings.bash \
@@ -17,4 +21,5 @@ if command -v fzf >/dev/null 2>&1; then
     done
     unset _f
   fi
+  unset _fzf_init
 fi
