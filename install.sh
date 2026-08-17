@@ -85,6 +85,20 @@ install_symlinks() {
     copy macos/DefaultKeyBinding.dict "$HOME/Library/KeyBindings/DefaultKeyBinding.dict"
   fi
 
+  # ssh: shared options live in a separate linked file pulled in via Include,
+  # because ~/.ssh/config itself is machine-specific (generated gcloud blocks,
+  # local hosts) and can't be symlinked wholesale. The Include must sit at the
+  # top — after a Host block it would only apply inside that host match.
+  link ssh/config "$HOME/.ssh/jsdotfiles.config"
+  local ssh_cfg="$HOME/.ssh/config" ssh_inc="Include ~/.ssh/jsdotfiles.config"
+  mkdir -p "$HOME/.ssh" && chmod 700 "$HOME/.ssh"
+  if ! grep -qxF "$ssh_inc" "$ssh_cfg" 2>/dev/null; then
+    local tmp; tmp="$(mktemp)"
+    { echo "$ssh_inc"; echo; cat "$ssh_cfg" 2>/dev/null; } > "$tmp"
+    mv "$tmp" "$ssh_cfg"
+    ok "prepended '$ssh_inc' to $ssh_cfg"
+  fi
+
   # Secrets: never symlinked. Seed from template if absent.
   if [ ! -f "$HOME/.secrets.zsh" ]; then
     cp "$DOTFILES/shell/secrets.zsh.example" "$HOME/.secrets.zsh"
@@ -105,6 +119,7 @@ zsh|zsh|zsh|
 git|git|git|
 vim|vim|vim|
 tmux|tmux|tmux|
+autossh|autossh|autossh|
 fzf|fzf|fzf|fallback_fzf
 zoxide|zoxide|zoxide|fallback_zoxide
 zellij||zellij|fallback_zellij

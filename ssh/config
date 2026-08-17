@@ -1,0 +1,11 @@
+# ============================================================================
+# ~/.ssh/jsdotfiles.config  (managed by jsdotfiles) — shared ssh options.
+# Pulled into ~/.ssh/config via Include; the config itself stays machine-
+# specific (generated gcloud blocks, local hosts) so it is never symlinked.
+# ============================================================================
+
+# Detect dead connections (e.g. after laptop sleep) in ~10s instead of hanging
+# forever. The autossh wrapper in shell/aliases.zsh relies on this to redial.
+Host *
+    ServerAliveInterval 5
+    ServerAliveCountMax 2
