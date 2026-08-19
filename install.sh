@@ -78,6 +78,7 @@ install_symlinks() {
   link tmux/tmux.conf     "$HOME/.tmux.conf"
   link zellij/config.kdl  "$HOME/.config/zellij/config.kdl"
   link p10k/p10k.zsh      "$HOME/.p10k.zsh"
+  link bin/ssh            "$HOME/.local/bin/ssh"
 
   # macOS-only: Cocoa key bindings. COPIED, not symlinked — sandboxed apps
   # (Notes, Mail, …) can't follow a symlink out to the repo.
@@ -119,7 +120,6 @@ zsh|zsh|zsh|
 git|git|git|
 vim|vim|vim|
 tmux|tmux|tmux|
-autossh|autossh|autossh|
 fzf|fzf|fzf|fallback_fzf
 zoxide|zoxide|zoxide|fallback_zoxide
 zellij||zellij|fallback_zellij

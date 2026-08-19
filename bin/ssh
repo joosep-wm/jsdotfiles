@@ -1,0 +1,67 @@
+#!/usr/bin/env bash
+# ssh (managed by jsdotfiles) — PATH wrapper over the real ssh, linked to
+# ~/.local/bin/ssh which shell/path.zsh prepends to PATH.
+#
+# Interactive sessions get an auto-redial loop: a dropped link (laptop sleep,
+# wifi blip — detected in ~10s via the ServerAlive settings in ~/.ssh/config)
+# redials every second until it reconnects, a clean exit (status 0) ends it,
+# or Ctrl-C stops it. Everything non-interactive — git/rsync (no tty) or a
+# remote command — execs the real binary untouched.
+#
+# After every disconnect the terminal modes the remote left behind are reset.
+# A zellij/tmux that never got to say goodbye leaves iTerm2 with mouse
+# reporting on (scrolling types "35;152;3M" junk) and the kitty/CSI-u keyboard
+# protocol active — under which Ctrl-C reaches the tty as an escape sequence,
+# not 0x03, so it can never become SIGINT. That is why this is a hand-rolled
+# loop and not autossh: the reset must happen between dials, and autossh
+# offers no hook there (and ignores SIGINT itself, on top).
+
+find_real_ssh() {
+    local cand
+    while IFS= read -r cand; do
+        [ "$cand" -ef "$0" ] && continue
+        printf '%s\n' "$cand"
+        return 0
+    done < <(type -aP ssh)
+    return 1
+}
+
+# Interactive = stdio is a tty, argv is options + destination only (no remote
+# command — a failing one would be re-run on every redial), and no mode flag
+# that makes ssh non-interactive by design.
+is_interactive_session() {
+    [ -t 0 ] && [ -t 1 ] || return 1
+    local OPTIND=1 opt
+    while getopts ':46AaCfGgKkMNnqsTtVvXxYyB:b:c:D:E:e:F:I:i:J:L:l:m:O:o:P:p:Q:R:S:W:w:' opt "$@"; do
+        case "$opt" in
+            N|f|V|G|O|Q|W|s|T) return 1 ;;
+        esac
+    done
+    [ "$OPTIND" -eq "$#" ]
+}
+
+# stty sane heals a raw tty a killed ssh failed to restore; the escapes undo
+# what the remote enabled in iTerm2 itself: kitty keyboard protocol (pop x3 +
+# clear flags), modifyOtherKeys, mouse reporting (all encodings), focus
+# events, alt screen, hidden cursor. Unsupported ones are ignored.
+reset_terminal() {
+    stty sane 2>/dev/null
+    printf '\033[<u\033[<u\033[<u\033[=0;1u\033[>4;0m\033[?1000l\033[?1002l\033[?1003l\033[?1005l\033[?1006l\033[?1015l\033[?1004l\033[?1049l\033[?25h'
+}
+
+real_ssh="$(find_real_ssh)" || { echo "jsdotfiles ssh wrapper: no real ssh on PATH" >&2; exit 127; }
+
+if is_interactive_session "$@"; then
+    trap reset_terminal EXIT
+    trap 'exit 130' INT TERM
+    reset_terminal
+    while :; do
+        "$real_ssh" "$@"
+        rc=$?
+        reset_terminal
+        [ "$rc" -eq 0 ] && exit 0
+        printf '\n[ssh] connection lost (exit %d) — redialing in 1s, Ctrl-C to stop\n' "$rc" >&2
+        sleep 1
+    done
+fi
+exec "$real_ssh" "$@"
