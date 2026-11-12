@@ -178,7 +178,7 @@ fallback_zellij() {
   esac
   mkdir -p "$HOME/.local/bin"
   local tmp; tmp="$(mktemp -d)"
-  # 0.45+ replaces full pane borders with title lines; 0.44.3 matches the Mac.
+  # 0.46.0 draws pane borders wrong in iTerm2; 0.44.3 matches the Mac.
   curl -sSfL "https://github.com/zellij-org/zellij/releases/download/v0.44.3/zellij-${target}.tar.gz" \
     | tar -xz -C "$tmp"
   mv "$tmp/zellij" "$HOME/.local/bin/zellij"
