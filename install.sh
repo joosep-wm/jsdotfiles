@@ -168,7 +168,7 @@ fallback_zoxide() {
 }
 
 fallback_zellij() {
-  info "Installing zellij from upstream release (not packaged in apt)"
+  info "Installing zellij 0.44.3 from upstream release (not packaged in apt)"
   local arch target
   arch="$(uname -m)"
   case "$arch" in
@@ -178,7 +178,8 @@ fallback_zellij() {
   esac
   mkdir -p "$HOME/.local/bin"
   local tmp; tmp="$(mktemp -d)"
-  curl -sSfL "https://github.com/zellij-org/zellij/releases/latest/download/zellij-${target}.tar.gz" \
+  # 0.46.0 draws pane borders wrong in iTerm2; 0.44.3 matches the Mac.
+  curl -sSfL "https://github.com/zellij-org/zellij/releases/download/v0.44.3/zellij-${target}.tar.gz" \
     | tar -xz -C "$tmp"
   mv "$tmp/zellij" "$HOME/.local/bin/zellij"
   chmod +x "$HOME/.local/bin/zellij"
