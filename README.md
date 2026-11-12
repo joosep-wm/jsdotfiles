@@ -90,6 +90,21 @@ the template, `chmod 600`).
 
 ---
 
+### Git over SSH on a server
+
+Servers use SSH remotes with the laptop's key forwarded, so no key or token lives on the server.
+
+```bash
+# From your laptop, with its GitHub key loaded in the SSH agent:
+ssh -A joosep@100.89.63.46
+
+# On the server:
+git clone git@github.com:joosep-wm/jsdotfiles.git ~/dev/jsdotfiles
+
+# Or convert an existing clone, from inside that repository:
+git remote set-url origin git@github.com:joosep-wm/jsdotfiles.git
+```
+
 ## Secrets
 
 Real keys live in `~/.secrets.zsh`, which is **gitignored and never committed**. Only
