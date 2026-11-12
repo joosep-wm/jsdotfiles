@@ -57,7 +57,7 @@ Re-running is safe — existing symlinks are refreshed, real files are backed up
 ## Remote Linux server setup (Ubuntu etc.)
 
 On a server you usually want it fast and minimal. The shell **degrades gracefully**: if
-oh-my-zsh isn't installed, `zshrc` falls back to a simple built-in prompt, so step 1 alone
+oh-my-zsh isn't installed, `zshrc` falls back to a simple built-in prompt, so `--tools` alone
 already gives you a working, sane shell.
 
 ```bash
