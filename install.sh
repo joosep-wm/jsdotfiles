@@ -280,6 +280,10 @@ EOF
 # ~/.gitconfig.local first; gh auth login then sees it and skips that step.
 install_gh() {
   install_one_tool gh gh gh ""
+  command -v gh >/dev/null 2>&1 || {
+    warn "gh unavailable; skipping HTTPS authentication setup"
+    return 1
+  }
   local local_cfg="$HOME/.gitconfig.local" host
   for host in https://github.com https://gist.github.com; do
     if ! git config --file "$local_cfg" --get-all "credential.$host.helper" | grep -qxF '!gh auth git-credential'; then
