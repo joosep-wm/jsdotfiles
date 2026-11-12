@@ -21,6 +21,8 @@ set -euo pipefail
 DOTFILES="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 OS="$(uname -s)"
 TS="$(date +%Y%m%d%H%M%S)"
+# Fallback installers put binaries here; the post-install PATH check must see them.
+export PATH="$HOME/.local/bin:$PATH"
 
 info() { printf '\033[0;34m›\033[0m %s\n' "$*"; }
 ok()   { printf '\033[0;32m✓\033[0m %s\n' "$*"; }
@@ -93,9 +95,10 @@ install_symlinks() {
   link ssh/config "$HOME/.ssh/jsdotfiles.config"
   local ssh_cfg="$HOME/.ssh/config" ssh_inc="Include ~/.ssh/jsdotfiles.config"
   mkdir -p "$HOME/.ssh" && chmod 700 "$HOME/.ssh"
-  if ! grep -qxF "$ssh_inc" "$ssh_cfg" 2>/dev/null; then
+  touch "$ssh_cfg"
+  if ! grep -qxF "$ssh_inc" "$ssh_cfg"; then
     local tmp; tmp="$(mktemp)"
-    { echo "$ssh_inc"; echo; cat "$ssh_cfg" 2>/dev/null; } > "$tmp"
+    { echo "$ssh_inc"; echo; cat "$ssh_cfg"; } > "$tmp"
     mv "$tmp" "$ssh_cfg"
     ok "prepended '$ssh_inc' to $ssh_cfg"
   fi
@@ -106,6 +109,23 @@ install_symlinks() {
     chmod 600 "$HOME/.secrets.zsh"
     warn "created ~/.secrets.zsh from template — fill in your real values"
   fi
+}
+
+# Git identity lives in ~/.gitconfig.local (included by git/gitconfig), so a
+# personal box does not commit with the work email.
+setup_git_identity() {
+  local local_cfg="$HOME/.gitconfig.local"
+  if [ -n "$(git config --file "$local_cfg" user.email 2>/dev/null)" ]; then
+    ok "git identity: $(git config --file "$local_cfg" user.name) <$(git config --file "$local_cfg" user.email)>"
+    return
+  fi
+  local name email
+  read -r -p "Git user name [Joosep Simm]: " name
+  name="${name:-Joosep Simm}"
+  read -r -p "Git user email: " email
+  git config --file "$local_cfg" user.name "$name"
+  git config --file "$local_cfg" user.email "$email"
+  ok "wrote git identity to $local_cfg"
 }
 
 # ---------------------------------------------------------------------------
@@ -128,7 +148,8 @@ zellij||zellij|fallback_zellij
 APT_UPDATED=0
 apt_install() {
   if [ "$APT_UPDATED" -eq 0 ]; then $SUDO apt-get update -qq && APT_UPDATED=1; fi
-  $SUDO apt-get install -y "$1"
+  # apt/debconf read stdin, which would eat the rest of the TOOLS loop input.
+  $SUDO apt-get install -y "$1" </dev/null
 }
 
 fallback_fzf() {
@@ -283,6 +304,7 @@ main() {
   done
 
   install_symlinks
+  setup_git_identity
 
   if [ "$do_tools" -eq 1 ]; then
     install_tools
@@ -296,8 +318,12 @@ main() {
   ok "Done. Next steps:"
   echo "   1. Edit ~/.secrets.zsh with your real tokens (if you use them)."
   echo "   2. Start a new shell:  exec zsh -l   (or 'reload')"
-  [ "$do_omz" -eq 0 ] && echo "   3. First time on this box? run: ./install.sh --tools --omz"
-  [ "$OS" = "Darwin" ] && echo "   4. macOS: see README for iTerm2 (Right Option = Esc+) & IntelliJ keymap."
+  if [ "$do_omz" -eq 0 ]; then
+    echo "   3. First time on this box? run: ./install.sh --tools --omz"
+  fi
+  if [ "$OS" = "Darwin" ]; then
+    echo "   4. macOS: see README for iTerm2 (Right Option = Esc+) & IntelliJ keymap."
+  fi
 }
 
 main "$@"

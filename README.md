@@ -25,7 +25,7 @@ jsdotfiles/
 │   ├── path.zsh               -> ~/.path.zsh     (only adds dirs that exist)
 │   ├── fzf.zsh / fzf.bash     -> ~/.fzf.*
 │   └── secrets.zsh.example    -> copy to ~/.secrets.zsh   (gitignored, never committed)
-├── git/gitconfig              -> ~/.gitconfig
+├── git/gitconfig              -> ~/.gitconfig (name/email in ~/.gitconfig.local, asked by install.sh)
 ├── vim/vimrc                  -> ~/.vimrc        (readline-style insert/cmdline editing)
 ├── tmux/tmux.conf             -> ~/.tmux.conf
 ├── zellij/config.kdl          -> ~/.config/zellij/config.kdl
@@ -38,7 +38,7 @@ jsdotfiles/
 ## Install on a new machine
 
 ```bash
-git clone <your-repo-url> ~/dev/jsdotfiles
+git clone https://github.com/joosep-wm/jsdotfiles.git ~/dev/jsdotfiles
 cd ~/dev/jsdotfiles
 ./install.sh --omz       # symlink dotfiles AND install oh-my-zsh + p10k + plugins
 exec zsh -l
@@ -63,7 +63,7 @@ already gives you a working, sane shell.
 sudo apt update && sudo apt install -y zsh git curl vim fzf
 
 # 2. Clone and link
-git clone <your-repo-url> ~/dev/jsdotfiles
+git clone https://github.com/joosep-wm/jsdotfiles.git ~/dev/jsdotfiles
 cd ~/dev/jsdotfiles
 ./install.sh                      # minimal: just symlinks + fallback prompt
 #   …or for the full prompt experience:

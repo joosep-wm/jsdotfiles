@@ -1,6 +1,6 @@
-[user]
-	name = Joosep Simm
-	email = joosep@gridraven.com
+# Name and email differ per machine; install.sh writes them to ~/.gitconfig.local.
+[include]
+	path = ~/.gitconfig.local
 [core]
 	autocrlf = input
 [init]
