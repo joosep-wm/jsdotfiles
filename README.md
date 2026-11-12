@@ -107,18 +107,11 @@ git remote set-url origin git@github.com:joosep-wm/jsdotfiles.git
 
 ### Git over HTTPS with gh
 
-Put the `gh` credential helper in `~/.gitconfig.local`, not in the shared gitconfig.
-
 ```bash
-sudo apt install -y gh
-gh auth login                 # answer "No" to "Authenticate Git with your GitHub credentials?"
-
-git config --file ~/.gitconfig.local --add credential.https://github.com.helper ''
-git config --file ~/.gitconfig.local --add credential.https://github.com.helper '!gh auth git-credential'
-git config --file ~/.gitconfig.local --add credential.https://gist.github.com.helper ''
-git config --file ~/.gitconfig.local --add credential.https://gist.github.com.helper '!gh auth git-credential'
+./install.sh --gh
 ```
 
+It installs `gh`, sets it as the HTTPS credential helper in `~/.gitconfig.local`, and runs `gh auth login`.
 Do not run `gh auth setup-git`. It writes to `~/.gitconfig`, which is a symlink to the tracked `git/gitconfig`.
 
 ## Secrets

@@ -9,6 +9,8 @@
 #                             zellij, vim, tmux, git) via the system package
 #                             manager, then set zsh as the login shell
 #   ./install.sh --omz        also install oh-my-zsh + powerlevel10k + plugins
+#   ./install.sh --gh         also install gh, make it the git credential helper
+#                             for HTTPS (in ~/.gitconfig.local), and log in
 #   ./install.sh --help
 #
 # Flags combine — a fresh box is usually:  ./install.sh --tools --omz
@@ -274,6 +276,25 @@ EOF
   set_default_shell
 }
 
+# gh writes its helper to ~/.gitconfig (the tracked file), so set it in
+# ~/.gitconfig.local first; gh auth login then sees it and skips that step.
+install_gh() {
+  install_one_tool gh gh gh ""
+  local local_cfg="$HOME/.gitconfig.local" host
+  for host in https://github.com https://gist.github.com; do
+    if ! git config --file "$local_cfg" --get-all "credential.$host.helper" | grep -qxF '!gh auth git-credential'; then
+      git config --file "$local_cfg" --add "credential.$host.helper" ''
+      git config --file "$local_cfg" --add "credential.$host.helper" '!gh auth git-credential'
+    fi
+  done
+  ok "gh is the git credential helper for HTTPS (in $local_cfg)"
+  if gh auth status --hostname github.com >/dev/null 2>&1; then
+    ok "gh already logged in to github.com"
+  else
+    gh auth login --hostname github.com --git-protocol https
+  fi
+}
+
 install_omz() {
   if [ ! -d "$HOME/.oh-my-zsh" ]; then
     info "Installing oh-my-zsh"
@@ -291,14 +312,15 @@ install_omz() {
 }
 
 main() {
-  local do_omz=0 do_tools=0 link_only=0
+  local do_omz=0 do_tools=0 do_gh=0 link_only=0
   for arg in "$@"; do
     case "$arg" in
       --omz)        do_omz=1 ;;
+      --gh)         do_gh=1 ;;
       --tools)      do_tools=1 ;;
       --link-only)  link_only=1 ;;
       --help|-h)
-        sed -n '3,17p' "$0"; exit 0 ;;
+        sed -n '3,19p' "$0"; exit 0 ;;
       *) warn "unknown arg: $arg" ;;
     esac
   done
@@ -312,7 +334,8 @@ main() {
     check_tools
   fi
 
-  [ "$do_omz" -eq 1 ] && install_omz
+  if [ "$do_omz" -eq 1 ]; then install_omz; fi
+  if [ "$do_gh" -eq 1 ]; then install_gh; fi
 
   echo
   ok "Done. Next steps:"
