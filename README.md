@@ -40,11 +40,13 @@ jsdotfiles/
 ```bash
 git clone https://github.com/joosep-wm/jsdotfiles.git ~/dev/jsdotfiles
 cd ~/dev/jsdotfiles
-./install.sh --omz       # symlink dotfiles AND install oh-my-zsh + p10k + plugins
+./install.sh --tools --omz   # symlink dotfiles, install tools, oh-my-zsh + p10k + plugins
 exec zsh -l
 ```
 
 - `./install.sh` — just symlinks (anything already there is moved to `*.backup.<timestamp>`).
+- `./install.sh --tools` — also installs zsh, git, vim, tmux, fzf, zoxide, and zellij,
+  and makes zsh the login shell.
 - `./install.sh --omz` — also installs oh-my-zsh, powerlevel10k, and the three custom
   plugins (`zsh-autosuggestions`, `zsh-syntax-highlighting`, `you-should-use`).
 
@@ -60,22 +62,18 @@ already gives you a working, sane shell.
 
 ```bash
 # 1. Prerequisites (Ubuntu/Debian)
-sudo apt update && sudo apt install -y zsh git curl vim fzf
+sudo apt update && sudo apt install -y git curl
 
-# 2. Clone and link
+# 2. Clone, link, and install tools (zsh, vim, tmux, fzf, zoxide, zellij; sets zsh as login shell)
 git clone https://github.com/joosep-wm/jsdotfiles.git ~/dev/jsdotfiles
 cd ~/dev/jsdotfiles
-./install.sh                      # minimal: just symlinks + fallback prompt
+./install.sh --tools              # minimal: tools + fallback prompt
 #   …or for the full prompt experience:
-./install.sh --omz                # adds oh-my-zsh + powerlevel10k + plugins
-
-# 3. Make zsh your login shell (optional but recommended)
-chsh -s "$(command -v zsh)"       # log out / back in to take effect
-#   If you can't chsh (no sudo / locked shell), add to ~/.bash_profile instead:
+./install.sh --tools --omz        # adds oh-my-zsh + powerlevel10k + plugins
+#   If chsh fails (no sudo / locked shell), add to ~/.bash_profile instead:
 #     [ -x "$(command -v zsh)" ] && exec zsh -l
 
-# 4. New shell
-exec zsh -l
+# 3. Log out and back in, so the new login shell and zellij start
 ```
 
 **Powerlevel10k fonts:** the fancy prompt needs a Nerd Font *in your terminal*, which is a
