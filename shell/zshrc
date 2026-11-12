@@ -11,7 +11,7 @@
 # instant prompt. Inner zellij panes re-source this file, hit the $ZELLIJ
 # guard, skip the block, and get the normal prompt.
 # Guards: interactive + real TTY · zellij installed · not already in zellij ·
-#         not an IDE-embedded terminal (VS Code / IntelliJ) · opt-out unset.
+#         not an IDE-embedded terminal (VS Code / IntelliJ / Orca) · opt-out unset.
 # Opt out per-tab with ZELLIJ_NO_AUTOSTART=1 (e.g. an iTerm2 "Remote" profile
 # whose command is:  env ZELLIJ_NO_AUTOSTART=1 zsh -l) so SSH tabs stay plain.
 if [[ -o interactive ]] && [[ -t 1 ]] \
@@ -19,7 +19,8 @@ if [[ -o interactive ]] && [[ -t 1 ]] \
    && [[ -z "$ZELLIJ" ]] \
    && [[ -z "$ZELLIJ_NO_AUTOSTART" ]] \
    && [[ "$TERM_PROGRAM" != "vscode" ]] \
-   && [[ "$TERMINAL_EMULATOR" != "JetBrains-JediTerm" ]]; then
+   && [[ "$TERMINAL_EMULATOR" != "JetBrains-JediTerm" ]] \
+   && [[ -z "$ORCA_TERMINAL_HANDLE" ]]; then
   export ZELLIJ_AUTO_ATTACH=true   # reuse one session; rely on zellij panes, not iTerm2 windows
   export ZELLIJ_AUTO_EXIT=true     # closing zellij closes the terminal window
   eval "$(zellij setup --generate-auto-start zsh)"
