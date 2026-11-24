@@ -6,7 +6,7 @@
 #   ./install.sh              symlink dotfiles + report any missing tools
 #   ./install.sh --link-only  symlink dotfiles only (skip the tool check)
 #   ./install.sh --tools      also install missing tools (zsh, fzf, zoxide,
-#                             zellij, vim, tmux, git) via the system package
+#                             zellij, lazygit, lazydocker, vim, tmux, git) via the system package
 #                             manager, then set zsh as the login shell
 #   ./install.sh --omz        also install oh-my-zsh + powerlevel10k + plugins
 #   ./install.sh --gh         also install gh, make it the git credential helper
@@ -145,6 +145,8 @@ tmux|tmux|tmux|
 fzf|fzf|fzf|fallback_fzf
 zoxide|zoxide|zoxide|fallback_zoxide
 zellij||zellij|fallback_zellij
+lazygit|lazygit|lazygit|fallback_lazygit
+lazydocker||lazydocker|fallback_lazydocker
 "
 
 APT_UPDATED=0
@@ -183,6 +185,41 @@ fallback_zellij() {
   mv "$tmp/zellij" "$HOME/.local/bin/zellij"
   chmod +x "$HOME/.local/bin/zellij"
   rm -rf "$tmp"
+}
+
+# Release asset names embed the version, so resolve the latest tag from the redirect.
+latest_tag() {
+  curl -sSfL -o /dev/null -w '%{url_effective}' "https://github.com/$1/releases/latest" | sed 's|.*/tag/v||'
+}
+
+fallback_lazygit() {
+  info "Installing lazygit from upstream release (apt package unavailable)"
+  local arch target ver
+  arch="$(uname -m)"
+  case "$arch" in
+    x86_64|amd64)  target="linux_x86_64" ;;
+    aarch64|arm64) target="linux_arm64" ;;
+    *) warn "no lazygit prebuilt binary for arch '$arch' — install it manually"; return 0 ;;
+  esac
+  ver="$(latest_tag jesseduffield/lazygit)"
+  mkdir -p "$HOME/.local/bin"
+  curl -sSfL "https://github.com/jesseduffield/lazygit/releases/download/v${ver}/lazygit_${ver}_${target}.tar.gz" \
+    | tar -xz -C "$HOME/.local/bin" lazygit
+}
+
+fallback_lazydocker() {
+  info "Installing lazydocker from upstream release (not packaged in apt)"
+  local arch target ver
+  arch="$(uname -m)"
+  case "$arch" in
+    x86_64|amd64)  target="Linux_x86_64" ;;
+    aarch64|arm64) target="Linux_arm64" ;;
+    *) warn "no lazydocker prebuilt binary for arch '$arch' — install it manually"; return 0 ;;
+  esac
+  ver="$(latest_tag jesseduffield/lazydocker)"
+  mkdir -p "$HOME/.local/bin"
+  curl -sSfL "https://github.com/jesseduffield/lazydocker/releases/download/v${ver}/lazydocker_${ver}_${target}.tar.gz" \
+    | tar -xz -C "$HOME/.local/bin" lazydocker
 }
 
 install_hint() {

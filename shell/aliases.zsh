@@ -3,3 +3,5 @@
 # ============================================================================
 alias cskip='claude --dangerously-skip-permissions'
 alias reload='exec $SHELL -l'   # reload the login shell after editing dotfiles
+alias lg='lazygit'
+alias lzd='lazydocker'

@@ -189,6 +189,10 @@ keybinds clear-defaults=true {
         bind "Alt 8" { GoToTab 8; }
         bind "Alt 9" { GoToTab 9; }
     }
+    shared_among "normal" "locked" {
+        bind "Alt Shift g" { Run "lazygit" { floating true; close_on_exit true; x "5%"; y "5%"; width "90%"; height "90%"; }; }
+        bind "Alt Shift d" { Run "lazydocker" { floating true; close_on_exit true; x "5%"; y "5%"; width "90%"; height "90%"; }; }
+    }
     shared_except "locked" {
         bind "Alt Shift f" { 
 	  LaunchPlugin "filepicker" {

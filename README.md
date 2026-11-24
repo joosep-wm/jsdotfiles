@@ -45,7 +45,7 @@ exec zsh -l
 ```
 
 - `./install.sh` — just symlinks (anything already there is moved to `*.backup.<timestamp>`).
-- `./install.sh --tools` — also installs zsh, git, vim, tmux, fzf, zoxide, and zellij,
+- `./install.sh --tools` — also installs zsh, git, vim, tmux, fzf, zoxide, zellij, lazygit, and lazydocker,
   and makes zsh the login shell.
 - `./install.sh --omz` — also installs oh-my-zsh, powerlevel10k, and the three custom
   plugins (`zsh-autosuggestions`, `zsh-syntax-highlighting`, `you-should-use`).
@@ -64,7 +64,7 @@ already gives you a working, sane shell.
 # 1. Prerequisites (Ubuntu/Debian)
 sudo apt update && sudo apt install -y git curl
 
-# 2. Clone, link, and install tools (zsh, vim, tmux, fzf, zoxide, zellij; sets zsh as login shell)
+# 2. Clone, link, and install tools (zsh, vim, tmux, fzf, zoxide, zellij, lazygit, lazydocker; sets zsh as login shell)
 git clone https://github.com/joosep-wm/jsdotfiles.git ~/dev/jsdotfiles
 cd ~/dev/jsdotfiles
 ./install.sh --tools              # minimal: tools + fallback prompt
@@ -179,6 +179,9 @@ unlocking. Those `Alt` bindings only reach zellij once iTerm2's **Left** Option 
 **Floating panes:** toggled with **`Alt w`** (moved off the zellij-default `Alt f`, which
 collided with `Option+→`/forward-word in the shell). Also still available in pane mode
 (`Ctrl+g` → `p` → `w`).
+
+**lazygit / lazydocker:** **`Alt Shift g`** and **`Alt Shift d`** open them in a floating pane
+in the focused pane's directory. Quit the tool (`q`) to close the pane.
 
 > Note: iTerm2 ships explicit `⌥←`/`⌥→` mappings (send `Esc b`/`Esc f` = back/forward-word).
 > Those take precedence over the `Esc+`/`Normal` setting, which is why word-jump keeps working
